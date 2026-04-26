@@ -2,16 +2,16 @@ let points = 100;
 
 const games = [
   {
-    teamA: "Fire Hawks",
-    teamB: "Shadow Wolves",
-    winner: "Fire Hawks",
-    video: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+    teamA: "Lakers",
+    teamB: "Warriors",
+    winner: "Lakers",
+    video: "https://www.youtube.com/embed/2k6r0gJ3H6Y"
   },
   {
-    teamA: "Steel Titans",
-    teamB: "Sky Kings",
-    winner: "Sky Kings",
-    video: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+    teamA: "Celtics",
+    teamB: "Bulls",
+    winner: "Bulls",
+    video: "https://www.youtube.com/embed/1a2b3c4d5e6"
   }
 ];
 
@@ -25,19 +25,26 @@ function renderGames() {
 
     div.innerHTML = `
       <h3>${game.teamA} vs ${game.teamB}</h3>
-      <iframe width="300" height="170" src="${game.video}" frameborder="0"></iframe>
+
+      <iframe src="${game.video}" frameborder="0" allowfullscreen></iframe>
+
       <br>
-      <input type="number" id="bet-${index}" placeholder="Bet points">
+
+      <input type="number" id="bet-${index}" placeholder="Enter points">
+
       <br>
-      <button onclick="placeBet(${index}, '${game.teamA}')">${game.teamA}</button>
-      <button onclick="placeBet(${index}, '${game.teamB}')">${game.teamB}</button>
+
+      <button onclick="confirmBet(${index}, '${game.teamA}')">${game.teamA}</button>
+      <button onclick="confirmBet(${index}, '${game.teamB}')">${game.teamB}</button>
+
+      <div id="result-${index}"></div>
     `;
 
     container.appendChild(div);
   });
 }
 
-function placeBet(index, team) {
+function confirmBet(index, team) {
   const betInput = document.getElementById(`bet-${index}`);
   const bet = parseInt(betInput.value);
 
@@ -46,16 +53,33 @@ function placeBet(index, team) {
     return;
   }
 
+  // Deduct immediately
+  points -= bet;
+  updatePoints();
+
+  const resultDiv = document.getElementById(`result-${index}`);
+
+  resultDiv.innerHTML = `
+    <p>Bet placed on ${team} for ${bet} points</p>
+    <button onclick="showResult(${index}, '${team}', ${bet})">See Result</button>
+  `;
+}
+
+function showResult(index, team, bet) {
   const game = games[index];
+  const resultDiv = document.getElementById(`result-${index}`);
 
   if (team === game.winner) {
-    points += bet; // win = double your bet
-    alert("You won!");
+    points += bet * 2; // win = double
+    resultDiv.innerHTML += `<p>✅ You won! +${bet}</p>`;
   } else {
-    points -= bet;
-    alert("You lost!");
+    resultDiv.innerHTML += `<p>❌ You lost!</p>`;
   }
 
+  updatePoints();
+}
+
+function updatePoints() {
   document.getElementById("points").innerText = "Points: " + points;
 }
 
