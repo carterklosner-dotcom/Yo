@@ -54,7 +54,10 @@ function confirmBet(index, team) {
     return;
   }
 
-  // Deduct immediately
+  // 🔒 NEW: lock the input so they can’t bet again
+  betInput.disabled = true;
+
+  // Deduct points
   points -= bet;
   updatePoints();
 
